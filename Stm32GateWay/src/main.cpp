@@ -3,10 +3,11 @@
 #include "pzem.h"
 
 void setup(){
-  SerialEsp_Setup(9600);
-  initRelays();
-  SerialPzem_Setup(9600);
+  SerialEsp_Setup(9600);  // Khởi tạo Serial giao tiếp với ESP
+  initRelays();           // Khởi tạo relay
+  SerialPzem_Setup(9600); // Khởi tạo Serial giao tiếp PZEM
 
+ //Cấu hình timer
   TIM_TypeDef *Instance = TIM3;
   HardwareTimer *MyTim = new HardwareTimer(Instance);
   MyTim->setOverflow(1000000, MICROSEC_FORMAT);

@@ -12,40 +12,32 @@ void LoraSetup()
     LoRa.setPins(SPI1_NSS, SPI1_RESET, SPI1_SCK);
     while (!LoRa.begin(433E6))
     {
-        Serial.println("LoRa init failed. Check your connections."); //trả về fail khi kết nối lora fail
+        Serial.println("LoRa init failed. Check your connections.");
         delay(5000);
     }
-    Serial.println("LoRa init succeeded."); //trả về thành công
+    Serial.println("LoRa init succeeded.");
     LoRa.receive();
 }
 
-void sendSensorData(String gatewayId, int penCode, int nodeId, float t, float h, float nh3, float h2s)
+void sendData(String gatewayId, int penCode, int nodeId)
 {
     beginSend();
     bool ackReceived = false;
     int count = 0;
-    while (!ackReceived && count <= 3) //gửi 3 lần nếu không có phản hồi
+    while (!ackReceived && count <= 3)
     {
         LoRa.beginPacket();
-        LoRa.print("gatewayId:"); 
+        LoRa.print("gatewayId:");
         LoRa.print(gatewayId);
         LoRa.print("; penCode:");
         LoRa.print(penCode, DEC);
-        LoRa.print("; nodeId:");
+        LoRa.print("; ControllerId:");
         LoRa.print(nodeId, DEC);
-        LoRa.print("; Temp:");
-        LoRa.print(t);
-        LoRa.print("; Hum:");
-        LoRa.print(h);
-        LoRa.print("; NH3:");
-        LoRa.print(nh3);
-        LoRa.print("; H2S:");
-        LoRa.print(h2s);
         LoRa.endPacket();
         unsigned long startTime = millis();
-        while (millis() - startTime < 5000) //chờ phản hồi trong 5s
+        while (millis() - startTime < 5000)
         {
-            int packetSize = LoRa.parsePacket(); //xem có phản hồi không
+            int packetSize = LoRa.parsePacket();
             if (packetSize)
             {
                 String response = LoRa.readString(); // Đọc gói tin phản hồi
